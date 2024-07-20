@@ -1,4 +1,7 @@
 x-common-variables: &common-variables
+  BOT_TOKEN: '*'
+  ANTHROPIC_API_KEY: '*'
+
 
 services:
   app:
@@ -8,12 +11,5 @@ services:
     volumes:
       - ./code:/app/code
     environment:
-      BOT_TOKEN: '*'
-      ANTHROPIC_API_KEY: '*'
-
-    command: python -m code.bot
-
-networks:
-  default:
-    name: app-network
-    external: true
+      <<: *common-variables
+    command: sh -c "cd code && python bot.py"
