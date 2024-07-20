@@ -4,8 +4,8 @@ from loguru import logger
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
-from code.anthropic import Anthropic
-from code.config import settings
+from anthropic import Anthropic
+from config import settings
 
 anthropic = Anthropic(api_key=settings.anthropic_api_key)
 
