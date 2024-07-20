@@ -1,8 +1,4 @@
-version: '3.8'
-
 x-common-variables: &common-variables
-  DEBUG: False
-
 
 services:
   app:
@@ -12,8 +8,10 @@ services:
     volumes:
       - ./code:/app/code
     environment:
-      <<: *common-variables
-    command: echo "Hello, world!"
+      BOT_TOKEN: '*'
+      ANTHROPIC_API_KEY: '*'
+
+    command: python -m code.bot
 
 networks:
   default:
