@@ -1,5 +1,6 @@
 import sys
 
+import emoji
 from loguru import logger
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
@@ -11,6 +12,15 @@ anthropic = Anthropic(api_key=settings.anthropic_api_key)
 
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if emoji.is_emoji(update.message.text):
+        logger.warning(
+            f'User <{update.effective_user.full_name or update.effective_user.username}> sent an emoji: {update.message.text}'
+        )
+
+        await update.message.reply_text(update.message.text)
+
+        return
+
     answer = await update.message.reply_text("Your message is in progress. I'll notify you when it's done.")
 
     data = {
@@ -59,6 +69,7 @@ def run_telegram_bot(token: str):
         CommandHandler('start', start_handler, filters=filters.ChatType.PRIVATE & filters.Command('start'))
     )
     app.add_handler(MessageHandler(filters.TEXT, text_handler))
+    app.add_handler(MessageHandler(filters.COMMAND, not_text_handler))
     app.add_handler(MessageHandler(~filters.TEXT, not_text_handler))
 
     app.run_polling()

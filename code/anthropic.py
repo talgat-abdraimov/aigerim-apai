@@ -51,7 +51,7 @@ class Anthropic(AsyncHttpClient):
         payload = {
             'model': 'claude-3-5-sonnet-20240620',
             'messages': [{'role': 'user', 'content': PROMPT.format(text=content)}],
-            'max_tokens': 100,
+            'max_tokens': 500,
             'temperature': 0.1,
         }
 
