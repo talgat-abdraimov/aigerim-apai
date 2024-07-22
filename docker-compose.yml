@@ -6,10 +6,7 @@ x-common-variables: &common-variables
 services:
   app:
     build: .
-    ports:
-      - "8001:8000"
-    volumes:
-      - ./code:/app/code
     environment:
       <<: *common-variables
     command: sh -c "cd code && python bot.py"
+    restart: unless-stopped
