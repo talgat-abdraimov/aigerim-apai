@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class Settings:
     bot_token: str
     anthropic_api_key: str
+    sentry_dsn: str | None = None
 
     @staticmethod
     def from_env() -> 'Settings':
