@@ -8,6 +8,7 @@ certifi==2024.7.4
     # via
     #   httpcore
     #   httpx
+    #   sentry-sdk
 emoji==2.12.1
     # via -r requirements.in
 h11==0.14.0
@@ -23,13 +24,17 @@ idna==3.7
     #   anyio
     #   httpx
 loguru==0.7.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   sentry-sdk
 python-telegram-bot==21.3
     # via -r requirements.in
 pytz==2024.1
     # via
     #   apscheduler
     #   python-telegram-bot
+sentry-sdk==2.12.0
+    # via -r requirements.in
 six==1.16.0
     # via apscheduler
 sniffio==1.3.1
@@ -40,5 +45,7 @@ typing-extensions==4.12.2
     # via emoji
 tzlocal==5.2
     # via apscheduler
+urllib3==2.2.2
+    # via sentry-sdk
 zimran-http==1.0.0
     # via -r requirements.in
