@@ -13,6 +13,7 @@ class Settings:
         return Settings(
             bot_token=os.getenv('BOT_TOKEN'),
             anthropic_api_key=os.getenv('ANTHROPIC_API_KEY'),
+            sentry_dsn=os.getenv('SENTRY_DSN'),
         )
 
     def __post_init__(self: 'Settings') -> None:
