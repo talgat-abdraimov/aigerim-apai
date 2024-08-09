@@ -42,6 +42,13 @@ def validate(func):
 
             return
 
+        logger.info(
+            'User {full_name} sent a message: {message}',
+            full_name=update.effective_user.full_name,
+            username=update.effective_user.username,
+            message=update.message.text,
+        )
+
         return await func(update, context)
 
     return wrapper
