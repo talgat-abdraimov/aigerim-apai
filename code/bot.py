@@ -109,10 +109,12 @@ async def anthropic_api_call(context: ContextTypes.DEFAULT_TYPE) -> str:
 
     try:
         corrected_message = await anthropic.messages(job.data['prompt_name'], text)
-    except Exception as e:
-        logger.error('An error occurred: {e}', e=e)
 
-        corrected_message = 'An error occurred while processing your message. Please try again'
+    except ValueError as e:
+        corrected_message = e.args[0]
+
+    except Exception:
+        corrected_message = 'An error occurred. Please try again later.'
 
     await context.bot.editMessageText(corrected_message, job.data['chat_id'], job.data['message_id'])
 

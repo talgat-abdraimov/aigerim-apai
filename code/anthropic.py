@@ -109,13 +109,16 @@ class Anthropic(AsyncHttpClient):
             'temperature': 0.1,
         }
 
-        try:
-            response: httpx.Response = await self.post('/v1/messages', json=payload, headers=self.headers)
+        response: httpx.Response = await self.post('/v1/messages', json=payload, headers=self.headers)
 
+        try:
             response.raise_for_status()
 
-        except HTTPError as error:
-            raise ValueError(f'An error occurred: {error}')
+        except HTTPError:
+            if response.status_code == 529:
+                raise ValueError('API rate limit exceeded. Please try again later')
+
+            raise ValueError('An error occurred. Please try again later')
 
         data = response.json()
 
