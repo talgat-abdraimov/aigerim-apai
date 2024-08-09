@@ -120,6 +120,7 @@ async def anthropic_api_call(context: ContextTypes.DEFAULT_TYPE) -> str:
 
 
 @logging
+@validate
 async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.full_name or update.effective_user.username
 
@@ -128,12 +129,25 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text('Send me a text message to correct.')
 
 
+@logging
+@validate
+async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(
+        'I can help you with the following commands:\n'
+        '/summary <text> - Summarize the text\n'
+        '/paraphrase <text> - Paraphrase the text\n'
+        '/help - Show this help message\n'
+        'OR Just send me a text message to correct.'
+    )
+
+
 def run_telegram_bot(token: str):
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler('start', start_handler))
     app.add_handler(CommandHandler('summary', summary_handler))
     app.add_handler(CommandHandler('paraphrase', paraphrase_handler))
+    app.add_handler(CommandHandler('help', help_handler))
     app.add_handler(MessageHandler(filters.TEXT, text_handler))
 
     app.run_polling()
