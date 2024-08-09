@@ -63,7 +63,14 @@ section-order = [
   "first-party",
   "local-folder",
 ]
-known-local-folder = ["code", "anthropic", "config"]
+known-local-folder = [
+  "code",
+  "anthropic",
+  "config",
+  "utils",
+  "decorators",
+  "constants",
+]
 
 [lint.per-file-ignores]
 "__init__.py" = ["E402"]
