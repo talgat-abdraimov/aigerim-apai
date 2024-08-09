@@ -1,7 +1,6 @@
 x-common-variables: &common-variables
-  BOT_TOKEN: '*'
-  ANTHROPIC_API_KEY: '*'
-
+  BOT_TOKEN: "*"
+  ANTHROPIC_API_KEY: "*"
 
 services:
   app:
