@@ -9,14 +9,12 @@ openai = AsyncOpenAI(api_key=settings.openai_api_key)
 async def get_completion(prompt: str, text: str) -> str:
     try:
         completion = await openai.chat.completions.create(
-            messages=[
-                {'role': 'system', 'content': prompt},
-                {'role': 'user', 'content': text},
-            ],
+            messages=[{'role': 'developer', 'content': prompt}, {'role': 'user', 'content': text}],
             stream=True,
             model='gpt-4o-mini',
             temperature=0.1,
-            max_tokens=500,
+            max_completion_tokens=1_000,
+            modalities=['text'],
         )
 
         response = ''
@@ -30,6 +28,7 @@ async def get_completion(prompt: str, text: str) -> str:
 
     except APIConnectionError as e:
         logger.error('The server could not be reached', error_detail=e.__cause__)
+
         raise ValueError('The server could not be reached')
 
     except RateLimitError as e:
