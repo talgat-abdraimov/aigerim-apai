@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
 from config import settings
-from constants import PROMPT_MAPPER, Prompt
+from constants import GRAMMAR_PROMPT
 from decorators import logging, validate
 from utils import get_completion
 
@@ -20,40 +20,10 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         'text': update.message.text,
         'message_id': answer.message_id,
         'chat_id': answer.chat_id,
-        'prompt': PROMPT_MAPPER[Prompt.grammar],
+        'prompt': GRAMMAR_PROMPT,
     }
 
-    context.job_queue.run_once(completion_call, 1, data=data, chat_id=update.effective_chat.id)
-
-
-@logging
-@validate
-async def summary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    answer = await update.message.reply_text("Your message is in progress. I'll notify you when it's done.")
-
-    data = {
-        'user_id': update.effective_user.id,
-        'text': update.message.text,
-        'message_id': answer.message_id,
-        'chat_id': answer.chat_id,
-        'prompt': PROMPT_MAPPER[Prompt.summarize],
-    }
-
-    context.job_queue.run_once(completion_call, 1, data=data, chat_id=update.effective_chat.id)
-
-
-@logging
-@validate
-async def paraphrase_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    answer = await update.message.reply_text("Your message is in progress. I'll notify you when it's done.")
-
-    data = {
-        'user_id': update.effective_user.id,
-        'text': update.message.text,
-        'message_id': answer.message_id,
-        'chat_id': answer.chat_id,
-        'prompt': PROMPT_MAPPER[Prompt.paraphrase],
-    }
+    await context.bot.send_chat_action(update.effective_chat.id, 'typing')
 
     context.job_queue.run_once(completion_call, 1, data=data, chat_id=update.effective_chat.id)
 
@@ -84,7 +54,9 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
     logger.info('User <{username}> started the bot.', username=username)
 
-    await update.message.reply_text('Send me a text message to correct.')
+    await update.message.reply_text(
+        "Send me a text message to correct. I'll replace it with the correct one."
+    )
 
 
 @logging
@@ -92,10 +64,8 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         'I can help you with the following commands:\n'
-        '/summary <text> - Summarize the text\n'
-        '/paraphrase <text> - Paraphrase the text\n'
         '/help - Show this help message\n'
-        'OR Just send me a text message to correct.'
+        'OR Just send me a text message to correct. I will do my best to help you.'
     )
 
 
@@ -103,8 +73,6 @@ def run_telegram_bot(token: str):
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler('start', start_handler))
-    app.add_handler(CommandHandler('summary', summary_handler))
-    app.add_handler(CommandHandler('paraphrase', paraphrase_handler))
     app.add_handler(CommandHandler('help', help_handler))
     app.add_handler(MessageHandler(filters.TEXT, text_handler))
 
@@ -125,6 +93,7 @@ if __name__ == '__main__':
 
         sentry_sdk.init(
             settings.sentry_dsn,
+            sample_rate=0.2,
             traces_sample_rate=0.1,
             profiles_sample_rate=0.5,
             integrations=[LoguruIntegration()],
