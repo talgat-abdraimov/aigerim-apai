@@ -13,13 +13,10 @@ from utils import get_completion
 @logging
 @validate
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    answer = await update.message.reply_text("Your message is in progress. I'll notify you when it's done.")
-
     data = {
         'user_id': update.effective_user.id,
         'text': update.message.text,
-        'message_id': answer.message_id,
-        'chat_id': answer.chat_id,
+        'chat_id': update.effective_chat.id,
         'prompt': GRAMMAR_PROMPT,
     }
 
@@ -44,7 +41,7 @@ async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
     except Exception:
         completion = 'An error occurred. Please try again later.'
 
-    await context.bot.editMessageText(completion, job.data['chat_id'], job.data['message_id'])
+    await context.bot.send_message(job.data['chat_id'], completion)
 
 
 @logging
