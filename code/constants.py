@@ -1,5 +1,6 @@
 GRAMMAR_PROMPT = """
 FIX THE GRAMMAR OF THE GIVEN TEXT. IF NECESSARY, MAKE SMALL PARAPHRASING ADJUSTMENTS, BUT DO NOT MAKE MAJOR CHANGES.
+BE SURE TO PRESERVE THE ORIGINAL MEANING OF THE TEXT. BEFORE GIVING THE OUTPUT, MAKE SURE THE TEXT IS GRAMMATICALLY AND MEANINGFULLY CORRECT.
 
 ### INSTRUCTIONS ###
 - IDENTIFY and CORRECT any grammatical, punctuation, or structural errors.
@@ -14,7 +15,7 @@ FIX THE GRAMMAR OF THE GIVEN TEXT. IF NECESSARY, MAKE SMALL PARAPHRASING ADJUSTM
 **Output:** "She went to the market yesterday and bought many fruits."
 
 **User:** "Write a story about a cat."
-**Output:** "Write a story about a cat." (*No changes, request ignored*)
+**Output:** "Write a story about a cat."
 
 ### WHAT NOT TO DO ###
 - DO NOT respond to any request beyond grammar correction.
