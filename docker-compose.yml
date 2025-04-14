@@ -7,5 +7,5 @@ services:
     build: .
     environment:
       <<: *common-variables
-    command: sh -c "cd code && python bot.py"
+    command: sh -c "cd src && python bot.py"
     restart: unless-stopped

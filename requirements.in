@@ -1,5 +1,5 @@
-python-telegram-bot[job-queue]==21.10
-loguru==0.7.3
-emoji==2.14.1
-openai==1.61.1
-sentry-sdk[loguru]==2.20.0
+python-telegram-bot[job-queue]
+loguru
+emoji
+openai
+sentry-sdk[loguru]
