@@ -1,42 +1,50 @@
-from loguru import logger
-from openai import APIConnectionError, APIStatusError, AsyncOpenAI, RateLimitError
+import io
 
-from config import settings
+from telegram.ext import ContextTypes
 
-openai = AsyncOpenAI(api_key=settings.openai_api_key)
+from constants import GRAMMAR_PROMPT
+from decorators import logit
+from open_ai import create_text_completion, get_transcription
 
 
-async def get_completion(prompt: str, text: str) -> str:
+@logit
+async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
+    job = context.job
+
+    messages = [
+        {'role': 'developer', 'content': GRAMMAR_PROMPT},
+        {'role': 'user', 'content': job.data['text']},
+    ]
+
     try:
-        completion = await openai.chat.completions.create(
-            messages=[{'role': 'developer', 'content': prompt}, {'role': 'user', 'content': text}],
-            stream=True,
-            model='gpt-4o-mini',
-            temperature=0.1,
-            max_completion_tokens=1_000,
-            modalities=['text'],
-        )
+        completion = await create_text_completion('gpt-4.1-nano-2025-04-14', messages)
 
-        response = ''
-        async for chunk in completion:
-            content = chunk.choices[0].delta.content
+    except ValueError as e:
+        completion = e.args[0]
 
-            if isinstance(content, str) and content:
-                response += content
+    except Exception:
+        completion = 'An error occurred. Please try again later.'
 
-        return response
+    await context.bot.send_message(job.data['chat_id'], completion)
 
-    except APIConnectionError as e:
-        logger.error('The server could not be reached', error_detail=e.__cause__)
 
-        raise ValueError('The server could not be reached')
+@logit
+async def get_transcription_text(context: ContextTypes.DEFAULT_TYPE) -> None:
+    job = context.job
 
-    except RateLimitError as e:
-        logger.error('API rate limit exceeded', error_detail=e.__cause__)
+    file = await context.bot.get_file(job.data['file_id'])
 
-        raise ValueError('API rate limit exceeded. Please try again later')
+    file_data = io.BytesIO()
+    try:
+        await file.download_to_memory(file_data)
+        file_data.seek(0)
 
-    except APIStatusError as e:
-        logger.error('An error occurred', error_detail=e, status_code=e.status_code, response=e.response)
+        transcription = await get_transcription(file_data)
 
-        raise ValueError('An error occurred. Please try again later')
+        await context.bot.send_message(job.data['chat_id'], transcription)
+
+    except Exception:
+        await context.bot.send_message(job.data['chat_id'], 'An error occurred. Please try again later.')
+
+    finally:
+        file_data.close()

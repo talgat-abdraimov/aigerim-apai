@@ -5,19 +5,17 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
 from config import settings
-from constants import GRAMMAR_PROMPT
-from decorators import logging, validate
-from utils import get_completion
+from decorators import logit, validate
+from utils import completion_call, get_transcription_text
 
 
-@logging
+@logit
 @validate
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = {
         'user_id': update.effective_user.id,
         'text': update.message.text,
         'chat_id': update.effective_chat.id,
-        'prompt': GRAMMAR_PROMPT,
     }
 
     await context.bot.send_chat_action(update.effective_chat.id, 'typing')
@@ -25,26 +23,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     context.job_queue.run_once(completion_call, 1, data=data, chat_id=update.effective_chat.id)
 
 
-@logging
-async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
-    job = context.job
-
-    prompt = job.data['prompt']
-    text = job.data['text']
-
-    try:
-        completion = await get_completion(prompt, text)
-
-    except ValueError as e:
-        completion = e.args[0]
-
-    except Exception:
-        completion = 'An error occurred. Please try again later.'
-
-    await context.bot.send_message(job.data['chat_id'], completion)
-
-
-@logging
+@logit
 @validate
 async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.full_name or update.effective_user.username
@@ -56,7 +35,7 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-@logging
+@logit
 @validate
 async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
@@ -66,11 +45,32 @@ async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
+@logit
+@validate
+async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logger.info('User <{username}> sent a voice message.', username=update.effective_user.username)
+
+    message = update.message
+
+    audio_file = await context.bot.get_file(message.voice.file_id if message.voice else message.audio.file_id)
+    if audio_file.file_size > 5_000_000:  # 5MB
+        await update.message.reply_text('The audio message is too large. Please try again.')
+
+        return
+
+    await context.bot.send_chat_action(update.effective_chat.id, 'typing')
+
+    data = {'file_id': audio_file.file_id, 'chat_id': update.effective_chat.id}
+
+    context.job_queue.run_once(get_transcription_text, 1, data=data, chat_id=update.effective_chat.id)
+
+
 def run_telegram_bot(token: str):
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler('start', start_handler))
     app.add_handler(CommandHandler('help', help_handler))
+    app.add_handler(MessageHandler(filters.VOICE, voice_handler))
     app.add_handler(MessageHandler(filters.TEXT, text_handler))
 
     app.run_polling()
