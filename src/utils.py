@@ -1,5 +1,6 @@
 import io
 
+from telegram import MessageEntity
 from telegram.ext import ContextTypes
 
 from constants import GRAMMAR_PROMPT
@@ -19,13 +20,12 @@ async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
     try:
         completion = await create_text_completion('gpt-4.1-nano-2025-04-14', messages)
 
-    except ValueError as e:
-        completion = e.args[0]
+        entities = [MessageEntity(type=MessageEntity.BLOCKQUOTE, offset=0, length=len(completion))]
+
+        await context.bot.send_message(job.data['chat_id'], completion, entities=entities)
 
     except Exception:
-        completion = 'An error occurred. Please try again later.'
-
-    await context.bot.send_message(job.data['chat_id'], completion)
+        await context.bot.send_message(job.data['chat_id'], 'An error occurred. Please try again later.')
 
 
 @logit
@@ -41,7 +41,9 @@ async def get_transcription_text(context: ContextTypes.DEFAULT_TYPE) -> None:
 
         transcription = await get_transcription(file_data)
 
-        await context.bot.send_message(job.data['chat_id'], transcription)
+        entities = [MessageEntity(type=MessageEntity.BLOCKQUOTE, offset=0, length=len(transcription))]
+
+        await context.bot.send_message(job.data['chat_id'], transcription, entities=entities)
 
     except Exception:
         await context.bot.send_message(job.data['chat_id'], 'An error occurred. Please try again later.')
