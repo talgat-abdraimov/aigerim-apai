@@ -1,6 +1,27 @@
 # Aigerim Apai 👋
 
-An intelligent text and audio processing assistant that helps you improve your writing and transcribe audio content. Aigerim Apai combines advanced language processing with audio transcription capabilities to provide a comprehensive text enhancement solution.
+<div align="center">
+
+[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-API-green.svg)](https://openai.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+
+</div>
+
+> 🎯 Your AI-powered writing assistant and audio transcription tool
+
+Aigerim Apai is an intelligent assistant that helps you perfect your writing and convert speech to text. It combines advanced AI capabilities to:
+
+- ✍️ **Fix Grammar Mistakes**: Automatically detect and correct grammatical errors in your text
+- 🎙️ **Transcribe Audio**: Convert spoken words into accurate written text
+- 🤖 **AI-Powered**: Leverages OpenAI's advanced language models for high accuracy
+- 🚀 **Easy to Use**: Simple setup with both API and Docker deployment options
+
+Perfect for:
+- Any dumb people who can't write (like me)
+- Anyone who doesn't want to pay for Grammarly or Telegram Premium
+- Anyone who wants to improve their writing quality
 
 ## 🚀 Features
 
