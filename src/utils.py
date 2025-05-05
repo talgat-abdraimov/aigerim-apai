@@ -4,11 +4,9 @@ from telegram import MessageEntity
 from telegram.ext import ContextTypes
 
 from constants import GRAMMAR_PROMPT
-from decorators import logit
 from open_ai import create_text_completion, get_transcription
 
 
-@logit
 async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
     job = context.job
 
@@ -28,7 +26,6 @@ async def completion_call(context: ContextTypes.DEFAULT_TYPE) -> str:
         await context.bot.send_message(job.data['chat_id'], 'An error occurred. Please try again later.')
 
 
-@logit
 async def get_transcription_text(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
 

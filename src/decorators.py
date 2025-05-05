@@ -6,18 +6,6 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 
-def logit(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-
-        except Exception as e:
-            logger.error('An error occurred: {e}', e=e, function=func.__name__)
-
-    return wrapper
-
-
 def validate(func):
     @wraps(func)
     async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):

@@ -5,11 +5,10 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
 from config import settings
-from decorators import logit, validate
+from decorators import validate
 from utils import completion_call, get_transcription_text
 
 
-@logit
 @validate
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = {
@@ -23,7 +22,6 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     context.job_queue.run_once(completion_call, 1, data=data, chat_id=update.effective_chat.id)
 
 
-@logit
 @validate
 async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.full_name or update.effective_user.username
@@ -35,7 +33,6 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-@logit
 @validate
 async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
@@ -45,7 +42,6 @@ async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-@logit
 @validate
 async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logger.info('User <{username}> sent a voice message.', username=update.effective_user.username)
@@ -65,6 +61,10 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     context.job_queue.run_once(get_transcription_text, 1, data=data, chat_id=update.effective_chat.id)
 
 
+async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.error('Exception while handling an update:', exc_info=context.error, update=update)
+
+
 def run_telegram_bot(token: str):
     app = ApplicationBuilder().token(token).build()
 
@@ -72,6 +72,8 @@ def run_telegram_bot(token: str):
     app.add_handler(CommandHandler('help', help_handler))
     app.add_handler(MessageHandler(filters.VOICE, voice_handler))
     app.add_handler(MessageHandler(filters.TEXT, text_handler))
+
+    app.add_error_handler(error_handler)
 
     app.run_polling()
 
