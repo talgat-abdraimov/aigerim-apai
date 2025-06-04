@@ -3,3 +3,4 @@ loguru
 emoji
 openai
 sentry-sdk[loguru]
+language_tool_python

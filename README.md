@@ -15,7 +15,7 @@ Aigerim Apai is an intelligent assistant that helps you perfect your writing and
 
 - ✍️ **Fix Grammar Mistakes**: Automatically detect and correct grammatical errors in your text
 - 🎙️ **Transcribe Audio**: Convert spoken words into accurate written text
-- 🤖 **AI-Powered**: Leverages OpenAI's advanced language models for high accuracy
+- 🤖 **AI-Powered**: Leverages OpenAI's advanced language models and LanguageTool for high accuracy
 - 🚀 **Easy to Use**: Simple setup with both API and Docker deployment options
 
 Perfect for:
@@ -28,6 +28,7 @@ Perfect for:
 - **Grammar Correction**: Automatically identifies and corrects grammar mistakes in text
 - **Audio Transcription**: Converts audio files to text with high accuracy
 - **OpenAI Integration**: Leverages OpenAI's powerful language models
+- **LanguageTool Integration**: Provides offline rule-based grammar correction
 - **Docker Support**: Easy deployment with containerization
 - **Comprehensive Testing**: Ensures reliability and accuracy
 - **Developer-Friendly**: Complete development tools and linting setup
@@ -144,5 +145,6 @@ The project includes Docker support for containerized deployment:
 ## ✨ Acknowledgments
 
 - OpenAI for their API and language models
+- LanguageTool project for grammar corrections
 - UV package installer for dependency management
 - Just command runner for task automation

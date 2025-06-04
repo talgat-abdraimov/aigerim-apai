@@ -12,7 +12,10 @@ certifi==2025.4.26
     # via
     #   httpcore
     #   httpx
+    #   requests
     #   sentry-sdk
+charset-normalizer==3.4.2
+    # via requests
 distro==1.9.0
     # via openai
 emoji==2.14.1
@@ -29,30 +32,42 @@ idna==3.10
     # via
     #   anyio
     #   httpx
+    #   requests
 jiter==0.9.0
     # via openai
+language-tool-python==2.9.4
+    # via -r requirements.in
 loguru==0.7.3
     # via
     #   -r requirements.in
     #   sentry-sdk
 openai==1.77.0
     # via -r requirements.in
+psutil==7.0.0
+    # via language-tool-python
 pydantic==2.11.4
     # via openai
 pydantic-core==2.33.2
     # via pydantic
 python-telegram-bot==22.0
     # via -r requirements.in
+requests==2.32.3
+    # via language-tool-python
 sentry-sdk==2.27.0
     # via -r requirements.in
 sniffio==1.3.1
     # via
     #   anyio
     #   openai
+toml==0.10.2
+    # via language-tool-python
 tqdm==4.67.1
-    # via openai
+    # via
+    #   language-tool-python
+    #   openai
 typing-extensions==4.13.2
     # via
+    #   anyio
     #   openai
     #   pydantic
     #   pydantic-core
@@ -62,4 +77,6 @@ typing-inspection==0.4.0
 tzlocal==5.3.1
     # via apscheduler
 urllib3==2.4.0
-    # via sentry-sdk
+    # via
+    #   requests
+    #   sentry-sdk
